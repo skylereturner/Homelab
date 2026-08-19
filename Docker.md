@@ -30,4 +30,12 @@ services:
     volumes:  
       - /home/YOURUSERNAME/dashboard-config:/app/config  
     restart: always  
+# Link back to the proxmox server from the dashboard in Portainer
+nano /home/YOURUSERAME/dashboard-config/bookmarks.yaml
+
+- Proxmox Server:
+    - icon: proxmox
+      href: https://YOUR_PROXMOX_IP_HERE:8006
+
+
 
