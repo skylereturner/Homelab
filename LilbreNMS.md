@@ -1,12 +1,15 @@
 # Monitoring Software (LibreNMS)
 ## Create files and Data Base
-# 1. Create the persistent database and application folders
+# 1. Create a clean stack code directory
+mkdir -p /home/sturner/librenms-stack
+cd /home/sturner/librenms-stack
+
+# 2. Re-create the empty database and application storage folders
 mkdir -p /home/sturner/librenms-config/db
 mkdir -p /home/sturner/librenms-config/app
 
-# 2. Grant full read/write permission to your sturner profile
-sudo chown -R sturner:sturner /home/sturner/librenms-config
-sudo chmod -R 775 /home/sturner/librenms-config
+# 3. Grant full read/write permission levels to the host folders
+sudo chmod -R 777 /home/sturner/librenms-config
 
 ## On Docker UI app
 version: '3.5'
@@ -15,6 +18,13 @@ services:
   db:
     image: mariadb:10.5
     container_name: librenms_db
+    command: [
+      "mysqld",
+      "--innodb-file-per-table=1",
+      "--lower-case-table-names=1",
+      "--character-set-server=utf8mb4",
+      "--collation-server=utf8mb4_unicode_ci"
+    ]
     environment:
       - MYSQL_ROOT_PASSWORD=sturner_db_secure
       - MYSQL_DATABASE=librenms
@@ -33,7 +43,7 @@ services:
     image: librenms/librenms:latest
     container_name: librenms
     ports:
-      - "8080:80"
+      - "8085:8000"
     volumes:
       - /home/sturner/librenms-config/app:/data
     environment:
@@ -46,8 +56,15 @@ services:
       - db
       - redis
     restart: always
+## Deploy:
+docker compose up -d
+docker compose down
 ## Link it back to homepage:
 nano /home/sturner/dashboard-config/bookmarks.yamml
 - Network Monitor:
     - icon: librenms
       href: http://192.168.100.36:8080
+
+## To Create User:
+docker compose exec --user librenms librenms lnms user:add --role=admin sturneradmin
+
