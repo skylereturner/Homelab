@@ -1,4 +1,4 @@
-#File Server in Docker
+# File Server in Docker
 
  1. Create the empty storage and configuration folders cleanly  
 mkdir -p /home/sturner/filebrowser-config  
